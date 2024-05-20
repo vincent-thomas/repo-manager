@@ -4,16 +4,19 @@ use std::{
   process::{Command, Stdio},
 };
 
-use clier::{display::Displayer, hooks::use_flag, run::ExitCode, Clier, HasMeta, Runnable};
+use clier::{
+  display::{label::LabelLogger, Displayer},
+  hooks::use_flag,
+  run::ExitCode,
+  Clier, HasMeta, Runnable,
+};
 
 use crate::{config, utils::UnwrapAnd};
 
 pub fn clone_project(repo_url: &str, dir: &str) {
-  let log_err = Displayer::Error {};
-  let log_success = Displayer::Success {};
-  let log_info = Displayer::Info {};
+  let log = LabelLogger::default();
 
-  log_info.write("Cloning...");
+  log.info("Cloning...");
 
   let git_clone_command = Command::new("git")
     .args(["clone", repo_url, dir])
@@ -24,14 +27,14 @@ pub fn clone_project(repo_url: &str, dir: &str) {
   match git_clone_command {
     Ok(value) => {
       if value.status.success() {
-        log_success.write("Pulled project!");
+        log.success("Pulled project!");
       } else {
-        log_err.write_err("Error writing project:");
+        log.error("Error writing project:");
         eprintln!("{}", String::from_utf8(value.stderr).unwrap());
       }
     }
     Err(_err) => {
-      log_err.write_err("error: {value}");
+      log.error("error: {value}");
     }
   }
 }
@@ -39,25 +42,22 @@ pub fn clone_project(repo_url: &str, dir: &str) {
 pub fn clone_command(clier: Clier<HasMeta, Runnable>) -> ExitCode {
   let config = config::load_config();
 
-  let log_err = Displayer::Error {};
-  let log_info = Displayer::Info {};
+  let log = LabelLogger::default();
 
   let repo = use_flag("repo", Some('r'), &clier)
     .try_into()
     .map(|value: String| format!("https://{}", value))
     .unwrap_and(|_| {
-      log_err.write_err("Repo flag doesn't exist");
+      log.error("Repo flag doesn't exist");
       1
     });
-
-  dbg!(&repo);
 
   let project_dir = std::fs::metadata(&config.project_directory);
 
   match project_dir {
     Ok(value) => {
       if !value.is_dir() {
-        log_err.write_err("project directory from config is not a directory");
+        log.error("project directory from config is not a directory");
         std::process::exit(1);
       }
 
@@ -76,12 +76,12 @@ pub fn clone_command(clier: Clier<HasMeta, Runnable>) -> ExitCode {
       if err.kind() == ErrorKind::NotFound {
         let path = Path::new(&config.project_directory);
 
-        log_info.write("Creating dir...");
+        log.info("Creating dir...");
         std::fs::create_dir(path).unwrap();
-        log_info.write("Rerun this script for it to work!");
+        log.info("Rerun this script for it to work!");
         std::process::exit(0);
       } else {
-        log_err.write_err("Unknwnw error");
+        log.error("Unknwnw error");
       }
 
       ExitCode(1)

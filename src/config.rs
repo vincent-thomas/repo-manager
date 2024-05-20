@@ -1,4 +1,4 @@
-use clier::display::Displayer;
+use clier::display::{label::LabelLogger, Displayer};
 use serde::{Deserialize, Serialize};
 
 use crate::utils::UnwrapAnd;
@@ -9,7 +9,7 @@ pub struct Configuration {
 }
 
 pub fn load_config() -> Configuration {
-  let log_err = Displayer::Error {};
+  let log = LabelLogger::default();
   let home_config_dir = std::env::var("XDG_CONFIG_HOME");
 
   let default_dir = format!("{}/.config", std::env::var("HOME").unwrap());
@@ -21,7 +21,7 @@ pub fn load_config() -> Configuration {
   .expect("Config doesn't exist");
 
   let config: Configuration = serde_json::from_str(contents.as_str()).unwrap_and(|_| {
-    log_err.write_err("Config file is required");
+    log.error("Config file is required");
     1
   });
 
