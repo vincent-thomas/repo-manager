@@ -1,9 +1,5 @@
-mod commands;
-mod config;
-mod utils;
-
 use clier::{run::ExitCode, CliMeta, Clier, CmdMeta, Commands};
-use commands::{pull::clone_command, remove::remove_command};
+use gitm::commands::{goto::togo_command, pull::clone_command, remove::remove_command};
 
 const NAME: &str = env!("CARGO_BIN_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -28,6 +24,13 @@ fn main() -> ExitCode {
     Commands::Command {
       meta: CmdMeta::new("remove", "Removes a repo from your file system"),
       handler: remove_command,
+    },
+    Commands::Command {
+      meta: CmdMeta::new(
+        "go",
+        "Goes to the current project and optionally starts your wanted editor",
+      ),
+      handler: togo_command,
     },
   ]);
   app.run()

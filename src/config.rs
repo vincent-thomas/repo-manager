@@ -1,11 +1,27 @@
 use clier::display::{label::LabelLogger, Displayer};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use crate::utils::UnwrapAnd;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug, Copy, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum Editors {
+  VSCode,
+  Neovim,
+}
+
+#[derive(Deserialize, Debug, Copy, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum Searchers {
+  Fzf,
+  Pick,
+}
+
+#[derive(Deserialize, Debug)]
 pub struct Configuration {
   pub project_directory: String,
+  pub editor: Option<Editors>,
+  pub searcher: Option<Searchers>,
 }
 
 pub fn load_config() -> Configuration {
