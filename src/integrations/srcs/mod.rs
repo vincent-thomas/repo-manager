@@ -26,18 +26,15 @@ impl Link {
     match self {
       Self::Url(url) => {
         let url_name = url.split('/').last();
-        let git_clone_command = Command::new("git")
-          .args([
-            "clone",
-            &url,
-            format!("{}/{}", &config.project_directory, url_name.unwrap()).as_str(),
-          ])
+        let path = format!("{}/{}", &config.project_directory, url_name.unwrap());
+        let _ = Command::new("git")
+          .args(["clone", &url, &path])
           .stdin(Stdio::piped())
           .stderr(Stdio::piped())
           .output()
           .unwrap();
 
-        String::from_utf8(git_clone_command.stdout).unwrap()
+        path
       }
       Self::Path(path) => path,
     }
