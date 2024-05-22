@@ -72,7 +72,7 @@ pub fn remove_command(clier: Clier<HasMeta, Runnable>) -> ExitCode {
 
       print!("Are you sure you want to delete this directory? (yes/no or y/n): ");
       let mut stdout = std::io::stdout();
-      stdout.flush().unwrap();
+      stdout.flush().expect("Unable to flush stdout");
       get_input_incase_not_yes()
     }
   };

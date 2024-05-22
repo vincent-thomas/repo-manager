@@ -11,7 +11,7 @@ use super::Searcher;
 pub struct Fzf;
 
 impl Searcher for Fzf {
-  fn search(&self, list: Vec<Repository>) -> Result<Repository, ()> {
+  fn search(&self, list: Vec<Repository>, initial_search: &str) -> Result<Repository, ()> {
     let search = list
       .iter()
       .map(|value| value.display_name.clone())
@@ -27,7 +27,13 @@ impl Searcher for Fzf {
       .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "Failed to capture echo stdout"))
       .unwrap();
 
-    let command = Command::new("fzf")
+    let mut command_builder = Command::new("fzf");
+
+    if !initial_search.is_empty() {
+      command_builder.args(["-q", initial_search]);
+    }
+
+    let command = command_builder
       .stdin(echo_output)
       .stdout(Stdio::piped())
       .stderr(Stdio::inherit())

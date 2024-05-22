@@ -26,13 +26,18 @@ impl Link {
     match self {
       Self::Url(url) => {
         let url_name = url.split('/').last();
-        let path = format!("{}/{}", &config.project_directory, url_name.unwrap());
+        let path = format!(
+          "{}/{}",
+          &config.project_directory,
+          // FIXME: unwrap
+          url_name.unwrap_or_else(|| panic!("Invalid git url: {:?}", url_name))
+        );
         let _ = Command::new("git")
           .args(["clone", &url, &path])
           .stdin(Stdio::piped())
           .stderr(Stdio::piped())
           .output()
-          .unwrap();
+          .expect("'git' command failed, maybe it's not available in path?");
 
         path
       }

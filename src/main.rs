@@ -1,5 +1,5 @@
 use clier::{run::ExitCode, CliMeta, Clier, CmdMeta, Commands};
-use gitm::commands::{goto::togo_command, pull::clone_command, remove::remove_command};
+use gitm::commands::{goto::goto_command, pull::clone_command, remove::remove_command};
 
 const NAME: &str = env!("CARGO_BIN_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -30,7 +30,7 @@ fn main() -> ExitCode {
         "go",
         "Goes to the current project and optionally starts your wanted editor",
       ),
-      handler: togo_command,
+      handler: goto_command,
     },
   ]);
   app.run()

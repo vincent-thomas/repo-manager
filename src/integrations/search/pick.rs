@@ -11,7 +11,8 @@ use super::Searcher;
 pub struct Pick;
 
 impl Searcher for Pick {
-  fn search(&self, list: Vec<Repository>) -> Result<Repository, ()> {
+  /// TODO: _initial
+  fn search(&self, list: Vec<Repository>, _initial: &str) -> Result<Repository, ()> {
     let search = list
       .iter()
       .map(|value| value.display_name.clone())

@@ -8,7 +8,8 @@ pub mod fzf;
 pub mod pick;
 
 pub trait Searcher: fmt::Debug {
-  fn search(&self, list: Vec<Repository>) -> Result<Repository, ()>;
+  // FIXME: venne
+  fn search(&self, list: Vec<Repository>, initial_search: &str) -> Result<Repository, ()>;
 }
 
 pub fn get_searcher<'a>(config: &Configuration) -> Option<&'a dyn Searcher> {

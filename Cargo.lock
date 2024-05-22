@@ -4,9 +4,9 @@ version = 3
 
 [[package]]
 name = "clier"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e419a026c43aa513d77fc506d7079927efd232b66b6a10bd43021ceecf2c0a9"
+checksum = "1cac39ddf568da76e4cc8333548e8c448027ccc4265af9066c21a9cd871e5122"
 dependencies = [
  "clier_parser",
  "console",
@@ -49,7 +49,7 @@ checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
 
 [[package]]
 name = "gitm"
-version = "0.4.1"
+version = "0.4.2"
 dependencies = [
  "clier",
  "serde",

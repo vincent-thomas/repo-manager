@@ -28,7 +28,11 @@ pub fn load_config() -> Configuration {
   let log = LabelLogger::default();
   let home_config_dir = std::env::var("XDG_CONFIG_HOME");
 
-  let default_dir = format!("{}/.config", std::env::var("HOME").unwrap());
+  let default_dir = format!(
+    "{}/.config",
+    std::env::var("HOME")
+      .expect("Neither Variable $HOME nor $XDG_CONFIG_HOME is not defined, this is required for recognizing config directory")
+  );
 
   let contents = std::fs::read_to_string(format!(
     "{}/gitm/config.json",
@@ -37,7 +41,7 @@ pub fn load_config() -> Configuration {
   .expect("Config doesn't exist");
 
   let config: Configuration = serde_json::from_str(contents.as_str()).unwrap_and(|_| {
-    log.error("Config file is required");
+    log.error("Config file invalid");
     1
   });
 
