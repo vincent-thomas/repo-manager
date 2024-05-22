@@ -3,14 +3,20 @@ use std::{
   process::{Command, Stdio},
 };
 
+use crate::integrations::srcs::Repository;
+
 use super::Searcher;
 
 #[derive(Debug)]
 pub struct Pick;
 
 impl Searcher for Pick {
-  fn search(&self, list: Vec<String>) -> Result<String, ()> {
-    let search = list.join("\n");
+  fn search(&self, list: Vec<Repository>) -> Result<Repository, ()> {
+    let search = list
+      .iter()
+      .map(|value| value.display_name.clone())
+      .collect::<Vec<String>>()
+      .join("\n");
 
     let echo_output = Command::new("echo")
       .arg(search) // Customize your input items here
@@ -37,7 +43,9 @@ impl Searcher for Pick {
         if value.is_empty() {
           Err(())
         } else {
-          Ok(value)
+          let thing_to_return = list.iter().find(|to_check| to_check.display_name == value);
+
+          thing_to_return.ok_or(()).cloned()
         }
       }
       // TODO: error hantering med traits

@@ -2,11 +2,13 @@ use std::fmt;
 
 use crate::config::{Configuration, Searchers};
 
+use super::srcs::Repository;
+
 pub mod fzf;
 pub mod pick;
 
 pub trait Searcher: fmt::Debug {
-  fn search(&self, list: Vec<String>) -> Result<String, ()>;
+  fn search(&self, list: Vec<Repository>) -> Result<Repository, ()>;
 }
 
 pub fn get_searcher<'a>(config: &Configuration) -> Option<&'a dyn Searcher> {
