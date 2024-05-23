@@ -6,7 +6,7 @@ pub struct Neovim;
 impl EditorOpen for Neovim {
   fn open(&self, dir: &str) -> Result<(), ()> {
     // TODO: Att inte denna variabeln inte används
-    let _command = Command::new("nvim")
+    let command = Command::new("nvim")
       .args(["--cmd", &format!("cd {}", dir), dir])
       .spawn()
       .unwrap()

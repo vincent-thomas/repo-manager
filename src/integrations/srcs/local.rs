@@ -2,9 +2,9 @@ use super::{Repository, Source};
 use crate::config;
 
 #[derive(Debug)]
-pub struct GitSource;
+pub struct LocalSource;
 
-impl Source for GitSource {
+impl Source for LocalSource {
   fn list() -> Vec<Repository> {
     let config = config::load_config();
 

@@ -3,7 +3,7 @@ use crate::config::Configuration;
 use crate::integrations::editor;
 use crate::integrations::search;
 use crate::integrations::srcs::Repository;
-use crate::integrations::srcs::{gh::GhSource, git::GitSource, Source};
+use crate::integrations::srcs::{gh::GhSource, local::LocalSource, Source};
 use crate::utils::make_sources_unique;
 
 use clier::display::label::LabelLogger;
@@ -16,7 +16,7 @@ fn get_sources<T>(_dir: T) -> Vec<Repository>
 where
   T: AsRef<Path>,
 {
-  let total_vec = [GhSource::list(), GitSource::list()]
+  let total_vec = [GhSource::list(), LocalSource::list()]
     .iter()
     .flatten()
     .cloned()

@@ -3,7 +3,7 @@ use std::process::{Command, Stdio};
 use crate::config;
 
 pub mod gh;
-pub mod git;
+pub mod local;
 
 #[derive(Debug, Clone)]
 pub enum Link {

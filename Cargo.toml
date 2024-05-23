@@ -2,7 +2,7 @@
 name = "gitm"
 description = "Git manager is a nice wrapper to git, where it manages repos in a specified directory"
 license = "MIT"
-version = "0.4.2"
+version = "0.4.3"
 edition = "2021"
 
 [dependencies]
