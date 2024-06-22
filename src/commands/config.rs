@@ -5,12 +5,12 @@ use clier::{
   Clier, HasMeta, Runnable,
 };
 
-use crate::config::{self, Editors};
+use crate::config::{self};
 
-fn resolve_edit(editor: &str) -> Option<Editors> {
+fn resolve_edit(editor: &str) -> Option<config::Editors> {
   match editor {
-    "neovim" => Some(Editors::Neovim),
-    "vscode" => Some(Editors::VSCode),
+    "neovim" => Some(config::Editors::Neovim),
+    "vscode" => Some(config::Editors::VSCode),
     _ => None,
   }
 }
@@ -28,7 +28,7 @@ pub fn set_editor_config_command(clier: Clier<HasMeta, Runnable>) -> ExitCode {
 
   let gur_editor = editor.expect("Invalid editor");
   let mut config = config::load_config();
-  config.editor = Some(gur_editor);
+  config.editor = gur_editor;
   config::write_config(config).expect("Failed to write");
 
   ExitCode(0)
@@ -40,6 +40,15 @@ pub fn set_dir_config_command(clier: Clier<HasMeta, Runnable>) -> ExitCode {
   let mut config = config::load_config();
   config.project_directory = path;
   config::write_config(config).expect("Failed to write");
+
+  ExitCode(0)
+}
+
+pub fn generate_config_command(_: Clier<HasMeta, Runnable>) -> ExitCode {
+  let default_config = config::Configuration::default();
+
+  // TODO: detta
+  let _ = config::write_config(default_config);
 
   ExitCode(0)
 }

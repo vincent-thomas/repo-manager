@@ -11,7 +11,7 @@ use clier::{
   Clier, HasMeta, Runnable,
 };
 
-use crate::{config, utils::UnwrapAnd};
+use crate::{config, integrations::srcs::Source, utils::UnwrapAnd};
 
 pub fn clone_project(repo_url: &str, dir: &str) {
   let log = LabelLogger::default();
@@ -39,10 +39,16 @@ pub fn clone_project(repo_url: &str, dir: &str) {
   }
 }
 
+struct CloneRepository<'a> {
+  source: &'a dyn Source,
+}
+
 pub fn clone_command(clier: Clier<HasMeta, Runnable>) -> ExitCode {
   let config = config::load_config();
 
   let log = LabelLogger::default();
+
+  if let Some(test) = &clier.args.commands.get(1) {}
 
   let repo = use_flag("repo", Some('r'), &clier)
     .try_into()

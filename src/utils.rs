@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::integrations::srcs::{Link, Repository};
+use crate::integrations::srcs::{ListItem, ListType};
 
 pub trait UnwrapAnd<T, E> {
   fn unwrap_and<F: Fn(E) -> i32>(self, err_fn: F) -> T;
@@ -18,21 +18,21 @@ impl<T, E> UnwrapAnd<T, E> for Result<T, E> {
   }
 }
 
-pub fn make_sources_unique(vec: &[Repository]) -> Vec<Repository> {
+pub fn make_sources_unique(vec: &[ListItem]) -> Vec<ListItem> {
   let mut seen = HashSet::new();
   let mut result = Vec::new();
 
   for item in vec {
-    if let Link::Path(ref _unused) = item.link {
-      if seen.insert(&item.repo_id) {
+    if let ListType::Local { .. } = item.ltype {
+      if seen.insert(&item.name) {
         result.push(item.clone());
       }
     }
   }
 
   for item in vec {
-    if let Link::Url(ref _unused) = item.link {
-      if seen.insert(&item.repo_id) {
+    if let ListType::Remote { .. } = item.ltype {
+      if seen.insert(&item.name) {
         result.push(item.clone());
       }
     }

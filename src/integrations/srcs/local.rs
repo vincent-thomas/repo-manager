@@ -1,30 +1,33 @@
-use super::{Repository, Source};
-use crate::config;
+use super::{list::Listable, ListItem};
+use crate::config::Configuration;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct LocalSource;
 
-impl Source for LocalSource {
-  fn list() -> Vec<Repository> {
-    let config = config::load_config();
+impl Listable for LocalSource {
+  fn list_repos(&self, config: &Configuration) -> Result<Vec<ListItem>, ()> {
+    let dir = std::fs::read_dir(&config.project_directory).unwrap();
 
-    let dir = std::fs::read_dir(config.project_directory).unwrap();
+    Ok(
+      dir
+        .into_iter()
+        .map(|value| {
+          let new_value = value.unwrap();
+          let path_buffer = new_value.path();
 
-    dir
-      .into_iter()
-      .map(|value| {
-        let value_buf = value.unwrap().path();
+          let path_name: String = path_buffer.into_os_string().into_string().unwrap();
 
-        let test = value_buf.into_os_string().into_string().unwrap();
+          let project_name = path_name.split('/').last().unwrap();
 
-        let project_name = test.split('/').last().unwrap();
-
-        Repository {
-          repo_id: project_name.to_string(),
-          display_name: project_name.to_string(),
-          link: super::Link::Path(test),
-        }
-      })
-      .collect()
+          ListItem {
+            icon: None,
+            name: project_name.to_string(),
+            ltype: super::ListType::Local {
+              path: new_value.path(),
+            },
+          }
+        })
+        .collect(),
+    )
   }
 }

@@ -1,9 +1,10 @@
 use std::{
   io,
   process::{Command, Stdio},
+  result::Result,
 };
 
-use crate::integrations::srcs::Repository;
+use crate::integrations::{self, srcs::ListItem, CheckHealth};
 
 use super::Searcher;
 
@@ -12,10 +13,14 @@ pub struct Pick;
 
 impl Searcher for Pick {
   /// TODO: _initial
-  fn search(&self, list: Vec<Repository>, _initial: &str) -> Result<Repository, ()> {
+  fn search<'a>(
+    &self,
+    list: &'a [ListItem],
+    _initial: &str,
+  ) -> Result<&'a integrations::srcs::ListItem, ()> {
     let search = list
       .iter()
-      .map(|value| value.display_name.clone())
+      .map(|value| value.name.clone())
       .collect::<Vec<String>>()
       .join("\n");
 
@@ -44,13 +49,32 @@ impl Searcher for Pick {
         if value.is_empty() {
           Err(())
         } else {
-          let thing_to_return = list.iter().find(|to_check| to_check.display_name == value);
+          let thing_to_return = list.iter().find(|to_check| to_check.name == value);
 
-          thing_to_return.ok_or(()).cloned()
+          thing_to_return.ok_or(())
         }
       }
       // TODO: error hantering med traits
       Err(_err) => Err(()),
     }
+  }
+}
+
+impl CheckHealth for Pick {
+  fn checkhealth(&self) -> Result<(), crate::integrations::HealthError>
+  where
+    Self: Sized,
+  {
+    Command::new("pick")
+      .arg("-v")
+      .stdout(Stdio::null())
+      .stdin(Stdio::null())
+      .stderr(Stdio::null())
+      .status()
+      .map(|_| ())
+      .map_err(|_| crate::integrations::HealthError {
+        severity: crate::integrations::HealthSeverity::Error,
+        messages: "program 'pick' is not installed".into(),
+      })
   }
 }
